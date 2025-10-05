@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useSession, UserButton } from "@clerk/nextjs";
 
 export function Navigation() {
-    const { isLoaded, isSignedIn } = useSession();
+    const { isSignedIn } = useSession();
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
