@@ -31,10 +31,9 @@ export default function DashboardLayout({
 	}
 
 	return (
-		<SidebarProvider defaultOpen={true}>
+		<SidebarProvider>
 			<AppSidebar />
 			<div className="flex h-screen w-full bg-gray-100">
-            	{/* Content */}
 				<div className="flex-1 flex flex-col overflow-hidden">
 					<DashboardNavigation />
 					<main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-4">
