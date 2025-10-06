@@ -3,6 +3,8 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { Analytics } from "@vercel/analytics/next"
 import { Geist, Geist_Mono } from "next/font/google";
 
+import ReactQueryProvider from '@/lib/query-client';
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,16 +27,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
-        >
-          {children}
-          <Analytics />
-        </body>
-      </html>
-    </ClerkProvider>
-  );
+
+	return (
+		<ClerkProvider>
+			<html lang="en">
+				<body
+					className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}>
+				<ReactQueryProvider>{children}</ReactQueryProvider>
+				<Analytics />
+				</body>
+			</html>
+		</ClerkProvider>
+	);
 }

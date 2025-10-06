@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { useSession } from "@clerk/nextjs";
+
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import {
     Mail,
-    Crown,
     Target,
     Upload,
     FileText,
@@ -12,9 +13,10 @@ import {
     Briefcase,
 } from "lucide-react";
 
+import UserPlan from '@/components/user-plan';
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress";
-import { getUserFirstName, type Session } from '@/selectors';
+import { type Session, getUserFirstName } from '@/selectors';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 const activities = [
@@ -53,6 +55,7 @@ const activities = [
 ]
 export default function DashboardPage() {
     const { session } = useSession();
+
     const firstName = getUserFirstName(session as Session);
 
     return (
@@ -107,23 +110,8 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
                 <div className="flex-1 flex flex-col gap-4">
-                    <Card>
-                        <CardHeader className="flex items-center">
-                            <Crown size="1rem" className="stroke-primary" />
-                            <CardTitle>Your Plan</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm font-semibold">Pro Plan</span>
-                                <span className="text-xs font-semibold">15 of 50 letters</span>
-                            </div>
-                            <Progress value={30} className="my-2" />
-                            <p className="text-xs text-gray-500">35 cover letters remaining this month</p>
-                            <Button variant="outline" className="mt-4 w-full">
-                                Upgrade Plan
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    <UserPlan />
+
                     <Card>
                         <CardHeader className="flex items-center">
                             <Target size="1rem" className="stroke-primary" />
