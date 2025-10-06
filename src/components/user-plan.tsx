@@ -10,17 +10,19 @@ import getAllotment from "@/lib/api/get-allotment";
 import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+
 import {
     getUserId,
     type Session,
     type Subscription,
     getSubscriptionTier
 } from '@/selectors';
+import Link from 'next/link';
 
 const UserPlan = () => {
     const { session } = useSession();
     const subscription = useSubscription();
-    const { data, isLoading, error } = useQuery<{allotment: number, count: number}>({
+    const { data, isLoading } = useQuery<{allotment: number, count: number}>({
         queryKey: ['userAllotment'],
         queryFn: () => getAllotment(getUserId(session as Session)),
     });
@@ -29,6 +31,7 @@ const UserPlan = () => {
 
     if (!isLoading && !data) return null;
 
+    const isFree = tier.toLowerCase() === 'free';
     const isUnlimited = tier.toLowerCase() === 'unlimited';
     const progressAmount = isUnlimited ? 100 : ((data?.count || 0)/(data?.allotment || 0))*100;
     const remaining = isUnlimited ? -1 : (data?.allotment || 0) - (data?.count || 0)
@@ -54,10 +57,13 @@ const UserPlan = () => {
                 <span className="text-xs text-gray-500">{
                     isLoading ? (
                         <Skeleton className="h-2 w-40" />
-                     ) : `${remaining < 0 ? 'Unlimited': remaining} cover letter${remaining !== 1 ? 's' : ''} remaining this month`}
+                     ) : `${remaining < 0 ? 'Unlimited': remaining} cover letter${remaining !== 1 ? 's' : ''} remaining${isFree ? '' : 'this month'}`}
                 </span>
-                <Button variant="outline" className="mt-4 w-full">
-                    Upgrade Plan
+
+                <Button variant="outline" className="mt-4 w-full" asChild>
+                    <Link href="/dashboard/upgrade">
+                        Upgrade Plan
+                    </Link>
                 </Button>
             </CardContent>
         </Card>
