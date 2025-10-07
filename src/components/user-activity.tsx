@@ -23,6 +23,12 @@ const Icons = {
     job: Briefcase,
 }
 
+const ActivityName = {
+    'cover letter': 'Cover Letter',
+    resume: 'Resume',
+    job: 'Job'
+}
+
 const Loading = () => {
     return Array(4).fill(0).map((_, index) => {
         return (
@@ -67,7 +73,9 @@ const UserActivity = () => {
             <CardContent>
             <div className="space-y-3">
                 {isLoading ? <Loading /> : (data || []).map((activity) => {
-                    const Icon = Icons[activity.category as keyof typeof Icons]
+                    const Icon = Icons[activity.category as keyof typeof Icons];
+                    const activityName = ActivityName[activity.category as keyof typeof ActivityName]
+                    
                     return (
                         <div
                             key={activity.id}
@@ -77,7 +85,7 @@ const UserActivity = () => {
                             <Icon className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1 space-y-1">
-                            <p className="font-medium leading-none text-balance">{activity.description}</p>
+                            <p className="font-medium leading-none text-balance">{activityName} - {activity.description}</p>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <span>{dayjs(activity.timestamp).fromNow()}</span>
                                 <span>•</span>
