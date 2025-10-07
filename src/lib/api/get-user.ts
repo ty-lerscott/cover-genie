@@ -6,13 +6,13 @@ const getUser = async (userId: string) => {
 		});
 
 		if (!response.ok) {
-			throw new Error('Failed to fetch allotment');
+			throw new Error('Failed to fetch user');
 		}
 
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error fetching allotment:', error);
+		console.error('Error fetching user:', error);
 		throw error;
 	}
 }
