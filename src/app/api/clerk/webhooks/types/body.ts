@@ -8,7 +8,7 @@ export type GenericBody<T, U> = {
     instance_id: string,
     object: string,
     timestamp: number,
-    data: T
+    data: T,
     type: U,
 }
 
