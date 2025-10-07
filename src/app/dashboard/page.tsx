@@ -2,11 +2,8 @@
 
 import Link from "next/link"
 import { useSession } from "@clerk/nextjs";
-
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import {
     Mail,
-    Target,
     Upload,
     FileText,
     Sparkles,
@@ -14,8 +11,8 @@ import {
 } from "lucide-react";
 
 import UserPlan from '@/components/user-plan';
+import UserGoal from '@/components/user-goal';
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress";
 import { type Session, getUserFirstName } from '@/selectors';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -53,6 +50,7 @@ const activities = [
       status: "Submitted",
     },
 ]
+
 export default function DashboardPage() {
     const { session } = useSession();
 
@@ -112,20 +110,7 @@ export default function DashboardPage() {
                 <div className="flex-1 flex flex-col gap-4">
                     <UserPlan />
 
-                    <Card>
-                        <CardHeader className="flex items-center">
-                            <Target size="1rem" className="stroke-primary" />
-                            <CardTitle>Your Monthly Goals</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm font-semibold">Job Applications</span>
-                                <span className="text-xs font-semibold">6 of 10</span>
-                            </div>
-                            <Progress value={60} className="my-2" />
-                            <p className="text-xs text-gray-500">4 more to reach your goal</p>
-                        </CardContent>
-                    </Card>
+                    <UserGoal />
                 </div>
             </section>
             <p className="mt-8 text-center text-sm text-gray-500">Every great job starts with a great cover letter — you've got this.</p>

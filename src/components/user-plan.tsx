@@ -1,13 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { Crown } from "lucide-react";
 import { useSession } from "@clerk/nextjs";
 import { useQuery } from '@tanstack/react-query';
 import { useSubscription } from '@clerk/nextjs/experimental';
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import getAllotment from "@/lib/api/get-allotment";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -17,7 +18,6 @@ import {
     type Subscription,
     getSubscriptionTier
 } from '@/selectors';
-import Link from 'next/link';
 
 const UserPlan = () => {
     const { session } = useSession();

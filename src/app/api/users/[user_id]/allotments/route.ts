@@ -1,13 +1,8 @@
-
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+import supabase from '@/lib/supabase';
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export async function POST(
+export async function GET(
   req: NextRequest,
   { params }: { params: { user_id: string } }
 ) {

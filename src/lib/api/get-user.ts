@@ -1,6 +1,6 @@
-const getAllotment = async (userId: string) => {
+const getUser = async (userId: string) => {
 	try {
-		const response = await fetch(`/api/users/${userId}/allotments`, {
+		const response = await fetch(`/api/users/${userId}`, {
 			method: 'GET',
             cache: 'no-cache'
 		});
@@ -17,4 +17,4 @@ const getAllotment = async (userId: string) => {
 	}
 }
 
-export default getAllotment;
+export default getUser;
