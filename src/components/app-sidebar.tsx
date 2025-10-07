@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSession } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 import {
 	User,
 	House,
@@ -11,6 +12,7 @@ import {
 	MessageCircleQuestionMark
 } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { isAdmin as isAdminSelector, type Session } from '@/selectors';
@@ -19,10 +21,41 @@ import {
 	useSidebar,
     SidebarFooter,
     SidebarContent,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+
+const links = (isAdmin: boolean) => [
+	{
+		href: '/dashboard',
+		text: 'Home',
+		Icon: House
+	},
+	{
+		href: '/dashboard/cover-letters',
+		text: 'Cover Letters',
+		Icon: Inbox
+	},
+	{
+		href: '/dashboard/resumes',
+		text: 'Resumes',
+		Icon: PcCase
+	},
+	{
+		href: '/dashboard/jobs',
+		text: 'Jobs',
+		Icon: BriefcaseBusiness
+	},
+	isAdmin ? {
+		href: '/dashboard/users',
+		text: 'Users',
+		Icon: User
+	} : undefined
+]
+
+
 
 export default function AppSidebar() {
 	const isMobile = useIsMobile();
+	const pathname = usePathname();
 	const {toggleSidebar} = useSidebar();
 	const {isSignedIn, session} = useSession();
 
@@ -35,9 +68,6 @@ export default function AppSidebar() {
 		toggleSidebar();
 	}
 
-	const isAdmin = isAdminSelector(session as Session);
-	const anchorStyles = 'flex items-center gap-2 p-2 ml-2 transition hover:text-primary hover:fill-primary';
-
 	return (
 		<Sidebar>
 			<div className="p-4">
@@ -48,28 +78,22 @@ export default function AppSidebar() {
 				</div>
 			</div>
 			<SidebarContent>
-				<Link href="/dashboard" onClick={handleSidebarItemClick} className={anchorStyles}>
-					<House size="1rem" />
-					Home
-				</Link>
-				<Link href="/dashboard/cover-letters" onClick={handleSidebarItemClick} className={anchorStyles}>
-					<Inbox size="1rem" />
-					Cover Letters
-				</Link>
-				<Link href="/dashboard/resumes" onClick={handleSidebarItemClick} className={anchorStyles}>
-					<PcCase size="1rem" />
-					Resumes
-				</Link>
-				<Link href="/dashboard/jobs" onClick={handleSidebarItemClick} className={anchorStyles}>
-					<BriefcaseBusiness size="1rem" />
-					Jobs
-				</Link>
-				{isAdmin ? (
-					<Link href="/dashboard/users" onClick={handleSidebarItemClick} className={anchorStyles}>
-						<User size="1rem" />
-						Users
-					</Link>
-				) : null}
+				{links(isAdminSelector(session as Session)).filter(Boolean).map(link => {
+					const isActive = link?.href === pathname;
+					const Icon = link?.Icon || House;
+					
+					return (
+						<Link
+							key={link?.href}
+							href={link?.href || ''}
+							onClick={handleSidebarItemClick}
+							className={cn('flex items-center gap-2 p-2 ml-2 transition', isActive ? 'text-primary fill-primary' : 'hover:text-primary hover:fill-primary')}
+						>
+							<Icon size="1rem" />
+							{link?.text}
+						</Link>
+					)
+				})}
 			</SidebarContent>
 			<SidebarFooter>
 				<Button asChild variant="ghost" className="flex items-center gap-2">

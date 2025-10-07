@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import userCreatedHook from './hooks/user.created';
 import subscriptionItemActiveHook from './hooks/subscriptionItem.active'
 
 export async function POST(req: NextRequest) {
@@ -7,6 +8,8 @@ export async function POST(req: NextRequest) {
 		const body = await req.json();
 
 		switch (body.type) {
+			case 'user.created':
+				return userCreatedHook(body);
 			case 'subscriptionItem.active':
 				return subscriptionItemActiveHook(body);
 			default:

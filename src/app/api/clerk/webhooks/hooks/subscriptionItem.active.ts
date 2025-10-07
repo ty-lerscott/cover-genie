@@ -1,55 +1,40 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import supabase from '@/lib/supabase';
+import { type GenericBody } from '../types/body';
 
 type TierSlug = 'free' | 'basic' | 'pro' | 'unlimited'
 
-type SubscriptionItemActiveBody = {
-    data: {
-        created_at: number,
-        id: string,
-        interval: string,
-        object: string,
-        payer: {
-            email: string,
-            first_name: string,
-            id: string,
-            image_url: string,
-            last_name: string,
-            organization_id: string,
-            organization_name: string,
-            user_id: string,
-        },
-        period_end: number,
-        period_start: number,
-        plan: {
-            amount: number,
-            currency: string,
-            id: string,
-            is_recurring: boolean,
-            name: string,
-            slug: TierSlug,
-        },
-        plan_id: string,
-        status: string,
-        subscription_id: string,
-        updated_at: string,
-    },
-    event_attributes: {
-        http_request: {
-            client_ip: string,
-            user_agent: string,
-        }
-    },
-    instance_id: string,
+type SubscriptionItemActiveBody = GenericBody<{
+    created_at: number,
+    id: string,
+    interval: string,
     object: string,
-    timestamp: number,
-    type: 'subscriptionItem.active'
-}
+    payer: {
+        email: string,
+        first_name: string,
+        id: string,
+        image_url: string,
+        last_name: string,
+        organization_id: string,
+        organization_name: string,
+        user_id: string,
+    },
+    period_end: number,
+    period_start: number,
+    plan: {
+        amount: number,
+        currency: string,
+        id: string,
+        is_recurring: boolean,
+        name: string,
+        slug: TierSlug,
+    },
+    plan_id: string,
+    status: string,
+    subscription_id: string,
+    updated_at: string,
+}, 'subscriptionItem.active'>
 
 const TIER_ALLOTMENTS = {
     free: 5,
