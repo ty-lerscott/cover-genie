@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useSession } from '@clerk/nextjs';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -12,11 +12,11 @@ import postJob from '@/lib/api/post-job';
 import JobForm from "@/components/forms/job";
 import { Button } from "@/components/ui/button";
 import JobsTable from '@/components/tables/jobs';
+import PageHeader from '@/components/page-header';
 import JobSidebar from '@/components/sidebars/job';
 import { getUserId, type Session } from '@/selectors';
 import { type JobInputs } from '@/app/types/job-inputs';
 import DeleteProgressAlert from '@/components/alerts/delete-progress';
-
 
 export default function DashboardJobsPage() {
     const { session } = useSession();
@@ -99,19 +99,15 @@ export default function DashboardJobsPage() {
                 onConfirm={handleConfirmClose}
             />
 
-            <section className="flex items-center justify-between">
-                <div>
-                    <h1 className="font-semibold text-xl">Job Tracker</h1>
-                    <p className="mt-2 text-muted-foreground text-pretty">
-                        Manage and track all your job applications
-                    </p>
-                </div>
-
+            <PageHeader
+                title="Job Tracker"
+                description="Manage and track all your job applications"
+            >
                 <Button size="lg" className="gap-2 cursor-pointer" onClick={handleToggleAddJobSidebar}>
                     <Plus className="size-5" />
                     Add Job
                 </Button>
-            </section>
+            </PageHeader>
 
             <JobsTable jobs={jobs} isJobsLoading={isJobsLoading} />
 

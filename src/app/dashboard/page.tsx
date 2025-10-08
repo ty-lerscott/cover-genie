@@ -7,6 +7,7 @@ import { Upload, Sparkles } from "lucide-react";
 import UserPlan from '@/components/user-plan';
 import UserGoal from '@/components/user-goal';
 import { Button } from "@/components/ui/button"
+import PageHeader from '@/components/page-header';
 import UserActivity from '@/components/user-activity';
 import { type Session, getUserFirstName } from '@/selectors';
 
@@ -16,12 +17,11 @@ export default function DashboardPage() {
     const firstName = getUserFirstName(session as Session);
 
     return (
-        <>
-            <section>
-                <h1 className="font-semibold text-xl">Welcome back{firstName ? `, ${firstName}`: ''}</h1>
-
-                <p>Here's what's new and what you can do next.</p>
-
+        <>       
+            <PageHeader
+                title={`Welcome back${firstName ? `, ${firstName}`: ''}`}
+                description="Here's what's new and what you can do next."
+            >
                 <div className="flex mt-4 gap-2">
                     <Button asChild variant="default">
                         <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ export default function DashboardPage() {
                         </div>
                     </Button>
 
-                    <Button asChild variant="secondary">
+                    <Button asChild variant="outline">
                         <div className="flex items-center gap-2">
                             <Upload size="1rem" />
                             
@@ -39,7 +39,7 @@ export default function DashboardPage() {
                         </div>
                     </Button>
                 </div>
-            </section>
+            </PageHeader>
 
             <section className="mt-4 flex gap-4">
                 <UserActivity />
