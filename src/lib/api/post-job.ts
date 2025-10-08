@@ -1,16 +1,15 @@
 import dayjs from '@/lib/dayjs';
 import { type AddJobInputs } from '@/app/types/add-job-inputs';
 
-const postAddJob = async (userId: string, data: AddJobInputs) => {
+const postJob = async (userId: string, data: AddJobInputs) => {
 	try {
 		const dateAdded = dayjs(data.dateAdded).valueOf();
 
-		const response = await fetch(`/api/add-job`, {
+		const response = await fetch(`/api/users/${userId}/job`, {
 			method: 'POST',
             cache: 'no-cache',
             headers: {
                 "Content-Type": "application/json",
-                "x-user-id": userId
             },
             body: JSON.stringify({
 				...data,
@@ -31,4 +30,4 @@ const postAddJob = async (userId: string, data: AddJobInputs) => {
 	}
 }
 
-export default postAddJob;
+export default postJob;

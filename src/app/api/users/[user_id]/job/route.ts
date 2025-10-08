@@ -4,26 +4,25 @@ import supabase from '@/lib/supabase';
 import sanitizeText from '@/lib/sanitize';
 import { type AddJobInputs } from '@/app/types/add-job-inputs';
 
-export async function POST(req: NextRequest) {
+export async function POST(
+    req: NextRequest,
+    { params }: { params: { user_id: string } }
+) {
 	try {
-        const headers = await req.headers;
+        const {user_id} = await params;
 		const body: AddJobInputs = await req.json();
 
-        const userId = headers.get('x-user-id');
-
-        if (!userId) {
+        if (!user_id) {
             return NextResponse.json({ message: 'user_id is required' }, { status: 400 });
         }
 
-        const sanitizedBody = Object.fromEntries(
+        const {title, companyName: company, description, ...sanitizedBody} = Object.fromEntries(
             Object.entries(body).map(([key, value]) => [key, typeof value === 'number' ? value : sanitizeText(value as string)])
         ) as AddJobInputs;
 
         const { data: jobData, error: jobError } = await supabase
             .from('jobs')
-            .insert([
-                { title: sanitizedBody.title, company: sanitizedBody.companyName, description: sanitizedBody.description },
-            ])
+            .insert({ title, company, description })
             .select()
             .single();
 
@@ -36,8 +35,8 @@ export async function POST(req: NextRequest) {
             .from('user_jobs')
             .insert([
                 {
+                    user_id,
                     job_id: jobData.id,
-                    user_id: userId,
                     status: sanitizedBody.status,
                     notes: sanitizedBody.notes,
                     date_added: sanitizedBody.dateAdded,
