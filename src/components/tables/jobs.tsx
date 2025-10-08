@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ExternalLink, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
+import dayjs from '@/lib/dayjs';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,7 +92,7 @@ const JobsTable = ({jobs, isJobsLoading}: {jobs?: Job[], isJobsLoading: boolean}
 					</SelectContent>
 					</Select>
 					<span className="ml-auto text-sm text-muted-foreground">
-						{jobs?.length || 0} {jobs?.length === 1 ? "job" : "jobs"}
+						{sortedJobs?.length || 0} {sortedJobs?.length === 1 ? "job" : "jobs"}
 					</span>
 				</div>
             </div>
@@ -133,26 +134,21 @@ const JobsTable = ({jobs, isJobsLoading}: {jobs?: Job[], isJobsLoading: boolean}
 									</Badge>
 								</TableCell>
 								<TableCell className="text-muted-foreground">
-								{new Date(job?.date_added).toLocaleDateString("en-US", {
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
+									{dayjs(Number(job.date_added)).format('MMM DD, YYYY')}
 								</TableCell>
 								<TableCell>
-								{job.link && (
+								{job.link ? (
 									<Button
-										variant="ghost"
 										size="sm"
-										onClick={(e) => {
-											e.stopPropagation()
+										variant="ghost"
+										onClick={() => {
 											window.open(job.link, "_blank")
 										}}
 										className="h-auto p-1"
 									>
-									<ExternalLink className="h-4 w-4" />
+										<ExternalLink className="h-4 w-4" />
 									</Button>
-								)}
+								) : null}
 								</TableCell>
 							</TableRow>
 						))}
