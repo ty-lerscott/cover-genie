@@ -16,13 +16,12 @@ export async function GET(
         const { data, error } = await supabase
             .from("user_jobs")
             .select(`
-                id,
                 status,
                 notes,
                 date_added,
                 link,
-                history,
                 job:jobs (
+                    id,
                     title,
                     company,
                     description

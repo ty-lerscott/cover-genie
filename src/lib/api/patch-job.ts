@@ -1,12 +1,12 @@
 import dayjs from '@/lib/dayjs';
 import { type JobInputs } from '@/app/types/job-inputs';
 
-const postJob = async (userId: string, data: JobInputs) => {
+const patchJob = async (userId: string, data: JobInputs) => {
 	try {
 		const date_added = dayjs(data.date_added).valueOf();
 
 		const response = await fetch(`/api/users/${userId}/job`, {
-			method: 'POST',
+			method: 'PATCH',
             cache: 'no-cache',
             headers: {
                 "Content-Type": "application/json",
@@ -18,16 +18,16 @@ const postJob = async (userId: string, data: JobInputs) => {
 		});
 
 		if (!response.ok) {
-			throw new Error('Failed to add job');
+			throw new Error('Failed to update job');
 		}
 
 		const resp = await response.json();
 
 		return resp;
 	} catch (error) {
-		console.error('Error adding job:', error);
+		console.error('Error updating job:', error);
 		throw error;
 	}
 }
 
-export default postJob;
+export default patchJob;

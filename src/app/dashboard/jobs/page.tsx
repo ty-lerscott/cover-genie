@@ -3,28 +3,20 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { useSession } from '@clerk/nextjs';
-import { useMutation, useQuery } from "@tanstack/react-query"
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useMutation, useQuery } from "@tanstack/react-query"
 
 import dayjs from '@/lib/dayjs';
 import getJobs from '@/lib/api/get-jobs';
 import postJob from '@/lib/api/post-job';
+import JobForm from "@/components/forms/job";
 import { Button } from "@/components/ui/button";
 import JobsTable from '@/components/tables/jobs';
-import AddJobForm from '@/components/forms/add-job';
+import JobSidebar from '@/components/sidebars/job';
 import { getUserId, type Session } from '@/selectors';
-import { type AddJobInputs } from '@/app/types/add-job-inputs';
-import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar"
-import {
-    AlertDialog,
-    AlertDialogTitle,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogContent,
-    AlertDialogDescription,
-} from "@/components/ui/alert-dialog"
+import { type JobInputs } from '@/app/types/job-inputs';
+import DeleteProgressAlert from '@/components/alerts/delete-progress';
+
 
 export default function DashboardJobsPage() {
     const { session } = useSession();
@@ -42,14 +34,15 @@ export default function DashboardJobsPage() {
         register,
         handleSubmit,
         formState: { dirtyFields },
-      } = useForm<AddJobInputs>({
+      } = useForm<JobInputs>({
         defaultValues: {
             status: 'Saved',
-            dateAdded: dayjs().format("YYYY-MM-DD")
+            date_added: dayjs().format("YYYY-MM-DD")
         }
     })
 
     const userId = getUserId(session as Session)
+    const isDirty = Boolean(Object.keys(dirtyFields).length)
 
     const handleToggleAlert = () => {
         setIsAlertOpen(prevState => !prevState);
@@ -60,7 +53,7 @@ export default function DashboardJobsPage() {
     }
 
     const handleConfirmSidebarClose = () => {
-        if (Object.keys(dirtyFields).length) {
+        if (isDirty) {
             handleToggleAlert();
         } else {
             handleToggleAddJobSidebar();
@@ -74,7 +67,7 @@ export default function DashboardJobsPage() {
     }
 
     const handleCancelAddJob = () => {
-        if (Object.keys(dirtyFields).length) {
+        if (isDirty) {
             handleToggleAlert();
         } else {
             handleToggleAddJobSidebar();
@@ -83,7 +76,7 @@ export default function DashboardJobsPage() {
     }
 
     const submitForm = useMutation({
-        mutationFn: async ({userId, data}: {userId: string, data: AddJobInputs}) => {
+        mutationFn: async ({userId, data}: {userId: string, data: JobInputs}) => {
             const resp = await postJob(userId, data)
             return resp;
         },
@@ -94,27 +87,17 @@ export default function DashboardJobsPage() {
         }
     })
 
-    const onSubmit: SubmitHandler<AddJobInputs> = (data: AddJobInputs) => {
+    const handleOnSubmit: SubmitHandler<JobInputs> = (data: JobInputs) => {
         submitForm.mutate({userId, data})
     }
 
     return (
         <>
-            <AlertDialog open={isAlertOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This will permanently delete your
-                            progress.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel onClick={handleToggleAlert}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmClose}>Continue</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DeleteProgressAlert
+                isOpen={isAlertOpen}
+                onCancel={handleCancelAddJob}
+                onConfirm={handleConfirmClose}
+            />
 
             <section className="flex items-center justify-between">
                 <div>
@@ -132,33 +115,21 @@ export default function DashboardJobsPage() {
 
             <JobsTable jobs={jobs} isJobsLoading={isJobsLoading} />
 
-            <SidebarProvider
-                defaultOpen={false}
-                open={isAddJobOpen}
-                style={{
-                    //@ts-ignore
-                    "--sidebar-width": "20rem",
-                    "--sidebar-width-mobile": "20rem",
-                }}
-                >
-                <Sidebar side="right">
-                    <SidebarHeader>
-                        <p className="font-semibold pl-2">Add Job</p>
-                        <Button variant="ghost" onClick={handleConfirmSidebarClose}>
-                            <X />
-                        </Button>
-                    </SidebarHeader>
-                    <SidebarContent className="px-4">
-                        <AddJobForm
-                            handleSubmit={handleSubmit}
-                            onSubmit={onSubmit}
-                            register={register}
-                            handleCancelAddJob={handleCancelAddJob}
-                            control={control}
-                        />
-                    </SidebarContent>
-                </Sidebar>
-            </SidebarProvider>
+            <JobSidebar
+                title="Add Job"
+                isOpen={isAddJobOpen}
+                onClose={handleConfirmSidebarClose}
+            >
+                <JobForm
+                    isDirty={isDirty}
+                    control={control}
+                    register={register}
+                    submitLabel="Add Job"
+                    onCancel={handleCancelAddJob}
+                    isPending={submitForm.isPending}
+                    onSubmit={handleSubmit(handleOnSubmit)}
+                />
+            </JobSidebar>
         </>
     )
 }

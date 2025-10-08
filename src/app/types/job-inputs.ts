@@ -1,11 +1,12 @@
 import { type StatusUnion } from './job';
 
-export type AddJobInputs = {
+export type JobInputs = {
+    id?: string;
     title: string;
-    companyName: string;
+    company: string;
     status: StatusUnion;
     link: string;
-    dateAdded: string;
+    date_added: string;
     notes: string;
     description: string;
 }

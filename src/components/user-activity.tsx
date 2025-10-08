@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getUserId, type Session } from '@/selectors';
 import getUserActivity from '@/lib/api/get-user-activity';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { cn } from "@/lib/utils";
 
 type ActivityType = {
     id: number;
@@ -65,36 +66,42 @@ const UserActivity = () => {
 
     if (!isLoading && !data) return null;
 
+    console.log({data})
+
     return (
         <Card className="flex-2">
             <CardHeader className="font-semibold">
                 <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
-            <CardContent>
-            <div className="space-y-3">
-                {isLoading ? <Loading /> : (data || []).map((activity) => {
-                    const Icon = Icons[activity.category as keyof typeof Icons];
-                    const activityName = ActivityName[activity.category as keyof typeof ActivityName]
-                    
-                    return (
-                        <div
-                            key={activity.id}
-                            className="flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-colors"
-                        >
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                            <Icon className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1 space-y-1">
-                            <p className="font-medium leading-none text-balance">{activityName} - {activity.description}</p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <span>{dayjs(activity.timestamp).fromNow()}</span>
-                                <span>•</span>
-                                <span className="text-primary">{activity.status}</span>
-                            </div>
-                            </div>
+            <CardContent className={cn(!isLoading && !data?.length ? "h-full" : '')}>
+                <div className={cn(!isLoading && !data?.length ? "h-full" : "space-y-3")}>
+                    {isLoading ? <Loading /> : !data?.length ? (
+                        <div className="flex items-center flex-col h-full justify-center">
+                            <span className="text-muted-foreground">No Recent Activity</span>
                         </div>
-                    )
-                })}
+                    ) : data.map((activity) => {
+                        const Icon = Icons[activity.category as keyof typeof Icons];
+                        const activityName = ActivityName[activity.category as keyof typeof ActivityName]
+                        
+                        return (
+                            <div
+                                key={activity.id}
+                                className="flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-colors"
+                            >
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                    <Icon className="h-5 w-5 text-primary" />
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                    <p className="font-medium leading-none text-balance">{activityName} - {activity.description}</p>
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <span>{dayjs(activity.timestamp).fromNow()}</span>
+                                        <span>•</span>
+                                        <span className="text-primary">{activity.status}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
             </CardContent>
         </Card>

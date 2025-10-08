@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { isAdmin as isAdminSelector, type Session } from '@/selectors';
 import {

@@ -1,11 +1,12 @@
-import { type FormEventHandler } from 'react';
+import { LoaderCircle } from "lucide-react";
+import type { FormEventHandler } from 'react';
 import { Controller, type Control, type UseFormRegister } from "react-hook-form";
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { type AddJobInputs } from '@/app/types/add-job-inputs';
+import { type JobInputs } from '@/app/types/job-inputs';
 import {
     Select,
     SelectItem,
@@ -14,15 +15,25 @@ import {
     SelectContent
 } from '@/components/ui/select';
 
-const AddJobForm = ({handleSubmit, onSubmit, register, handleCancelAddJob, control}: {
-    handleSubmit: (onSubmit: (data: AddJobInputs) => unknown) => FormEventHandler<HTMLFormElement> | undefined
-    onSubmit: (data: AddJobInputs) => void,
-    register: UseFormRegister<AddJobInputs>
-    handleCancelAddJob: () => void;
-    control: Control<AddJobInputs, any, AddJobInputs>
+const JobForm = ({
+    isDirty,
+    control,
+    register,
+    onSubmit,
+    onCancel,
+    isPending,
+    submitLabel,
+}: {
+    isDirty: boolean;
+    onCancel(): void;
+    isPending: boolean;
+    submitLabel: string;
+    register: UseFormRegister<JobInputs>
+    control: Control<JobInputs, any, JobInputs>,
+    onSubmit: FormEventHandler<HTMLFormElement>
 }) => {
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-2">
                 <Label htmlFor="title">
                     Job Title <span className="text-destructive">*</span>
@@ -33,11 +44,11 @@ const AddJobForm = ({handleSubmit, onSubmit, register, handleCancelAddJob, contr
                 />
             </div>
             <div className="space-y-2">
-                <Label htmlFor="companyName">
+                <Label htmlFor="company">
                     Company Name <span className="text-destructive">*</span>
                 </Label>
                 <Input
-                    {...register('companyName', {required: true})}
+                    {...register('company', {required: true})}
                     placeholder="e.g. TechCorp"
                 />
             </div>
@@ -61,7 +72,7 @@ const AddJobForm = ({handleSubmit, onSubmit, register, handleCancelAddJob, contr
                     )}
                 />
                 <div className="space-y-2 mt-4">
-                    <Label htmlFor="companyName">
+                    <Label htmlFor="link">
                         Job Link
                     </Label>
                     <Input
@@ -71,8 +82,8 @@ const AddJobForm = ({handleSubmit, onSubmit, register, handleCancelAddJob, contr
                 </div>
 
                 <div className="space-y-2 mt-4">
-                    <Label htmlFor="dateAdded">Date Added</Label>
-                    <Input type="date" {...register('dateAdded', { required: true })} />
+                    <Label htmlFor="date_added">Date Added</Label>
+                    <Input type="date" {...register('date_added', { required: true })} />
                 </div>
 
                 <div className="space-y-2 mt-4">
@@ -93,11 +104,14 @@ const AddJobForm = ({handleSubmit, onSubmit, register, handleCancelAddJob, contr
             </div>
 
             <div className="flex flex-col gap-2 mt-2">
-                <Button type="submit">Add Job</Button>
-                <Button variant="outline" type="button" onClick={handleCancelAddJob}>Cancel</Button>
+                <Button type="submit" className="relative" disabled={!isDirty}>
+                {isPending ? <LoaderCircle className="animate-spin absolute right-2/3" /> : null}
+                    {submitLabel}
+                </Button>
+                <Button variant="outline" type="button" onClick={onCancel}>Cancel</Button>
             </div>
         </form>
     )
 }
 
-export default AddJobForm;
+export default JobForm;

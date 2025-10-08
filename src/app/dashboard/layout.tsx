@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect } from "react";
 import { useSession } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
+import { useEffect, type ReactNode } from "react";
 
-import AppSidebar from '@/components/app-sidebar';
+import AppSidebar from '@/components/sidebars/app';
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardNavigation from "@/components/dashboard-navigation";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
 	const router = useRouter();
 	const { isLoaded, isSignedIn } = useSession();
